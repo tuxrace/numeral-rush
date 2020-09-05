@@ -12,5 +12,7 @@ Using MacOS
 ## Run Specific simulator
 
 `npx react-native run-ios --simulator="iPhone SE"`
+
 or
+
 `npx react-native run-ios --simulator="iPhone 11"`
