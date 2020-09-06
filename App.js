@@ -26,6 +26,7 @@ const LENGTH = 12;
 
 const App: () => React$Node = () => {
   const [cards, setCards] = useState([]);
+  const [steps, setSteps] = useState(0);
 
   const initialize = () => {
     const numerals = Array.from(Array(RANGE), (_, i) => i + 1);
@@ -39,6 +40,7 @@ const App: () => React$Node = () => {
       };
     });
     setCards(data);
+    setSteps(0);
   };
 
   const restart = () => {
@@ -58,6 +60,8 @@ const App: () => React$Node = () => {
     if (newCards[idx].state === 'disabled') {
       return;
     }
+
+    setSteps(steps + 1);
 
     if (newCards[idx].state === 'open') {
       newCards[idx].state = 'closed';
@@ -103,6 +107,9 @@ const App: () => React$Node = () => {
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}>
+          <View style={styles.body}>
+            <Text style={styles.text}>{steps}</Text>
+          </View>
           <View style={styles.body}>
             {cards.map((item, x) => (
               <TouchableHighlight onPress={() => click(x)} id={x}>
