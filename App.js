@@ -21,12 +21,15 @@ import {
   Colors,
 } from 'react-native/Libraries/NewAppScreen';
 
+const RANGE = 100;
+const LENGTH = 12;
+
 const App: () => React$Node = () => {
   const [cards, setCards] = useState([]);
 
   const initialize = () => {
-    const set = [1, 2, 3 , 4, 5, 6, 7, 8, 9, 10, 11, 12];
-    // const set = [`🐶`, `🐱`, `🐭`, `🐹`, `🐰`, `🦊`, `🐻`, `🐼`, `🐨`, `🐯`, `🦁`, `🐮`];
+    const numerals = Array.from(Array(RANGE), (_, i) => i + 1);
+    const set = shuffle(numerals).slice(0, LENGTH);
     const shuf = shuffle([...set, ...set]);
     const data = shuf.map((i, idx) => {
       return {
