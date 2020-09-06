@@ -11,7 +11,7 @@ Using MacOS
 
 `npx react-native run-ios`
 
-## Run Specific simulator
+## Run on a specific phone simulator
 
 `npx react-native run-ios --simulator="iPhone SE"`
 
