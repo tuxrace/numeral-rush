@@ -24,6 +24,24 @@ import {
 const App: () => React$Node = () => {
   const [cards, setCards] = useState([]);
 
+  const initialize = () => {
+    const set = [1, 2, 3 , 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    // const set = [`🐶`, `🐱`, `🐭`, `🐹`, `🐰`, `🦊`, `🐻`, `🐼`, `🐨`, `🐯`, `🦁`, `🐮`];
+    const shuf = shuffle([...set, ...set]);
+    const data = shuf.map((i, idx) => {
+      return {
+        val: i,
+        state: 'closed',
+        idx,
+      };
+    });
+    setCards(data);
+  };
+
+  const restart = () => {
+    initialize();
+  };
+
   const shuffle = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -34,7 +52,6 @@ const App: () => React$Node = () => {
 
   const click = (idx) => {
     let newCards = [...cards];
-    
     if (newCards[idx].state === 'disabled') {
       return;
     }
@@ -44,8 +61,7 @@ const App: () => React$Node = () => {
     } else {
       newCards[idx].state = 'open';
     }
-    const opened = newCards.filter(i => i.state === 'open');
-    console.log(opened);
+    const opened = newCards.filter((i) => i.state === 'open');
 
     if (opened.length === 2) {
       if (opened[0].val === opened[1].val) {
@@ -74,16 +90,7 @@ const App: () => React$Node = () => {
   };
 
   useEffect(() => {
-    const set = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
-    const shuf = shuffle([...set, ...set]);
-    const data = shuf.map((i, idx) => {
-      return {
-        val: i,
-        state: 'closed',
-        idx,
-      };
-    });
-    setCards(data);
+    initialize();
   },[]);
 
   return (
@@ -95,18 +102,25 @@ const App: () => React$Node = () => {
           style={styles.scrollView}>
           <View style={styles.body}>
             {cards.map((item, x) => (
-              <TouchableHighlight onPress={() => click(x)}>
+              <TouchableHighlight onPress={() => click(x)} id={x}>
                 <View style={item.state === 'disabled' ? styles.disabled : styles.card}>
-                  <Text style={styles.text}> {item.state === 'open' || item.state === 'disabled' ? item.val : ''} </Text>
+                  <Text style={styles.text}> {item.state === 'open' || item.state === 'disabled' ? item.val : ''}</Text>
                 </View>
               </TouchableHighlight>
               ))}
+          </View>
+          <View style={styles.body}>
+            <TouchableHighlight onPress={restart}>
+              <Text style={styles.text}> Restart Game </Text>
+            </TouchableHighlight>
           </View>
         </ScrollView>
       </SafeAreaView>
     </>
   );
 };
+
+const CARD_SIZE = 80;
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -152,8 +166,8 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
   card: {
-    width: 80,
-    height: 80,
+    width: CARD_SIZE,
+    height: CARD_SIZE,
     backgroundColor: 'grey',
     display: 'flex',
     justifyContent: 'center',
@@ -161,8 +175,8 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   disabled: {
-    width: 80,
-    height: 80,
+    width: CARD_SIZE,
+    height: CARD_SIZE,
     backgroundColor: 'yellow',
     display: 'flex',
     justifyContent: 'center',
@@ -170,7 +184,7 @@ const styles = StyleSheet.create({
     margin: 4,
   },
   text: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
   },
 });

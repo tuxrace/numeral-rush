@@ -1,6 +1,8 @@
-# 🧠 Remembrance
+# 🧠 Numeral Rush
 > Memory game mobile edition. Created using React Native.
 
+# Screen
+![](game-screen.gif)
 # To Run
 
 Using MacOS
