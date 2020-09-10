@@ -1,5 +1,5 @@
 # 🧠 Numeral Rush
-> Memory game mobile edition. Created using React Native.
+> Memory game mobile edition. Created using React Native
 
 # Screen
 ![](game-screen.gif)

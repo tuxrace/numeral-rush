@@ -22,7 +22,8 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 const RANGE = 100;
-const LENGTH = 12;
+const PAIRS = 12;
+const CARD_SIZE = 80;
 
 const App: () => React$Node = () => {
   const [cards, setCards] = useState([]);
@@ -30,7 +31,7 @@ const App: () => React$Node = () => {
 
   const initialize = () => {
     const numerals = Array.from(Array(RANGE), (_, i) => i + 1);
-    const set = shuffle(numerals).slice(0, LENGTH);
+    const set = shuffle(numerals).slice(0, PAIRS);
     const shuf = shuffle([...set, ...set]);
     const data = shuf.map((i, idx) => {
       return {
@@ -68,6 +69,7 @@ const App: () => React$Node = () => {
     } else {
       newCards[idx].state = 'open';
     }
+
     const opened = newCards.filter((i) => i.state === 'open');
 
     if (opened.length === 2) {
@@ -117,7 +119,7 @@ const App: () => React$Node = () => {
                   <Text style={styles.text}> {item.state === 'open' || item.state === 'disabled' ? item.val : ''}</Text>
                 </View>
               </TouchableHighlight>
-              ))}
+            ))}
           </View>
           <View style={styles.body}>
             <TouchableHighlight onPress={restart}>
@@ -129,8 +131,6 @@ const App: () => React$Node = () => {
     </>
   );
 };
-
-const CARD_SIZE = 80;
 
 const styles = StyleSheet.create({
   scrollView: {
