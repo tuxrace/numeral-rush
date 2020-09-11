@@ -1,9 +1,9 @@
 # 🧠 Numeral Rush
 > Memory game mobile edition. Created using React Native
 
-# Screen
+## Game Preview
 ![](game-screen.gif)
-# To Run
+## To Run
 
 Using MacOS
 
