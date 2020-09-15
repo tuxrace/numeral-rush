@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -15,6 +15,7 @@ import {
   Text,
   StatusBar,
   TouchableHighlight,
+  Animated,
 } from 'react-native';
 
 import {
@@ -28,6 +29,48 @@ const CARD_SIZE = 80;
 const App: () => React$Node = () => {
   const [cards, setCards] = useState([]);
   const [steps, setSteps] = useState(0);
+  const deg = useRef(new Animated.Value(0)).current;
+  let degVal = useRef(0).current;
+
+  deg.addListener(({value}) => {
+    degVal = value;
+  });
+
+  const downVal = deg.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+  const upVal = deg.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['180deg', '360deg'],
+  });
+
+  const down = {
+    transform: [{rotateY: downVal}],
+  };
+
+  const up = {
+    transform: [{rotateY: upVal}],
+  };
+
+  const flip = () => {
+    console.log(degVal);
+    if (Math.ceil(degVal) > 0) {
+      Animated.timing(deg, {
+        toValue: 0,
+        duration: 180,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(deg, {
+        toValue: 1,
+        duration: 180,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  const [ clicked, setClicked ] = useState(null);
 
   const initialize = () => {
     const numerals = Array.from(Array(RANGE), (_, i) => i + 1);
@@ -61,7 +104,8 @@ const App: () => React$Node = () => {
     if (newCards[idx].state === 'disabled') {
       return;
     }
-
+    flip();
+    
     setSteps(steps + 1);
 
     if (newCards[idx].state === 'open') {
@@ -114,11 +158,22 @@ const App: () => React$Node = () => {
           </View>
           <View style={styles.body}>
             {cards.map((item, x) => (
-              <TouchableHighlight onPress={() => click(x)} id={x}>
-                <View style={item.state === 'disabled' ? styles.disabled : styles.card}>
-                  <Text style={styles.text}> {item.state === 'open' || item.state === 'disabled' ? item.val : ''}</Text>
-                </View>
-              </TouchableHighlight>
+              <View>
+                {/* <TouchableHighlight onPress={() => click(x)} key={x}>
+                  <View style={item.state === 'disabled' ? styles.disabled : styles.card}>
+                    <Text style={styles.text}> {item.state === 'open' || item.state === 'disabled' ? item.val : ''}</Text>
+                  </View>
+                </TouchableHighlight> */}
+                <TouchableHighlight onPress={() => click(x)} key={x}>
+                  <>
+                    <Animated.View style={[styles.cardUp, item.state === 'open' || item.state === 'disabled' ? up : {}]}>
+                      <Text style={styles.text}> {item.val} </Text>
+                    </Animated.View>
+                    <Animated.View style={[styles.cardDown, item.state === 'open' || item.state === 'disabled' ? down : {}]}>
+                    </Animated.View>
+                  </>
+                </TouchableHighlight>
+              </View>
             ))}
           </View>
           <View style={styles.body}>
@@ -126,6 +181,15 @@ const App: () => React$Node = () => {
               <Text style={styles.text}> Restart Game </Text>
             </TouchableHighlight>
           </View>
+          <TouchableHighlight onPress={flip}>
+            <>
+              <Animated.View style={[styles.cardUp, up]}>
+                <Text> x </Text>
+              </Animated.View>
+              <Animated.View style={[styles.cardDown, down]}>
+              </Animated.View>
+            </>
+          </TouchableHighlight>
         </ScrollView>
       </SafeAreaView>
     </>
@@ -182,6 +246,28 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    margin: 4,
+    backfaceVisibility: 'hidden',
+  },
+  cardUp: {
+    width: CARD_SIZE,
+    height: CARD_SIZE,
+    backgroundColor: 'lightgrey',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backfaceVisibility: 'hidden',
+    margin: 4,
+  },
+  cardDown: {
+    width: CARD_SIZE,
+    height: CARD_SIZE,
+    backgroundColor: 'grey',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    backfaceVisibility: 'hidden',
     margin: 4,
   },
   disabled: {
