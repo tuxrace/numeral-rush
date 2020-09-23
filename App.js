@@ -29,6 +29,9 @@ const CARD_SIZE = 80;
 const App: () => React$Node = () => {
   const [cards, setCards] = useState([]);
   const [steps, setSteps] = useState(0);
+  const [ openedCards, setOpenedCards ] = useState([]);
+  const [clicked, setClicked] = useState(null);
+
   const deg = useRef(new Animated.Value(0)).current;
   let degVal = useRef(0).current;
 
@@ -53,9 +56,22 @@ const App: () => React$Node = () => {
     transform: [{rotateY: upVal}],
   };
 
-  const flip = () => {
-    console.log(degVal);
-    if (Math.ceil(degVal) > 0) {
+  const flip = (flipState = 'closed') => {
+    // console.log(degVal);
+    // if (Math.ceil(degVal) > 0) {
+    //   Animated.timing(deg, {
+    //     toValue: 0,
+    //     duration: 180,
+    //     useNativeDriver: true,
+    //   }).start();
+    // } else {
+    //   Animated.timing(deg, {
+    //     toValue: 1,
+    //     duration: 180,
+    //     useNativeDriver: true,
+    //   }).start();
+    // }
+    if (flipState === 'open') {
       Animated.timing(deg, {
         toValue: 0,
         duration: 180,
@@ -70,8 +86,6 @@ const App: () => React$Node = () => {
     }
   };
 
-  const [ clicked, setClicked ] = useState(null);
-
   const initialize = () => {
     const numerals = Array.from(Array(RANGE), (_, i) => i + 1);
     const set = shuffle(numerals).slice(0, PAIRS);
@@ -79,7 +93,7 @@ const App: () => React$Node = () => {
     const data = shuf.map((i, idx) => {
       return {
         val: i,
-        state: 'closed',
+        state: null,
         idx,
       };
     });
@@ -104,18 +118,20 @@ const App: () => React$Node = () => {
     if (newCards[idx].state === 'disabled') {
       return;
     }
-    flip();
-    
+    setClicked(idx);
     setSteps(steps + 1);
 
     if (newCards[idx].state === 'open') {
+      flip('open');
       newCards[idx].state = 'closed';
     } else {
+      flip('closed');
       newCards[idx].state = 'open';
     }
 
     const opened = newCards.filter((i) => i.state === 'open');
-
+    setOpenedCards(opened);
+    console.log(opened)
     if (opened.length === 2) {
       if (opened[0].val === opened[1].val) {
         newCards[opened[0].idx].state = 'disabled';
@@ -135,6 +151,7 @@ const App: () => React$Node = () => {
         }
         return i;
       });
+      flip('open');
       setCards(newCards);
       return;
     }
@@ -166,10 +183,10 @@ const App: () => React$Node = () => {
                 </TouchableHighlight> */}
                 <TouchableHighlight onPress={() => click(x)} key={x}>
                   <>
-                    <Animated.View style={[styles.cardUp, item.state === 'open' || item.state === 'disabled' ? up : {}]}>
+                    <Animated.View style={[styles.cardUp, item.state !== null ? up : {}]}>
                       <Text style={styles.text}> {item.val} </Text>
                     </Animated.View>
-                    <Animated.View style={[styles.cardDown, item.state === 'open' || item.state === 'disabled' ? down : {}]}>
+                    <Animated.View style={[styles.cardDown, item.state !== null ? down : {}]}>
                     </Animated.View>
                   </>
                 </TouchableHighlight>
@@ -181,7 +198,7 @@ const App: () => React$Node = () => {
               <Text style={styles.text}> Restart Game </Text>
             </TouchableHighlight>
           </View>
-          <TouchableHighlight onPress={flip}>
+          {/* <TouchableHighlight onPress={flip}>
             <>
               <Animated.View style={[styles.cardUp, up]}>
                 <Text> x </Text>
@@ -189,7 +206,7 @@ const App: () => React$Node = () => {
               <Animated.View style={[styles.cardDown, down]}>
               </Animated.View>
             </>
-          </TouchableHighlight>
+          </TouchableHighlight> */}
         </ScrollView>
       </SafeAreaView>
     </>
